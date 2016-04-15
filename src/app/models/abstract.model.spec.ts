@@ -4,10 +4,9 @@ import * as sinonChai from 'sinon-chai';
 chai.use(sinonChai);
 const expect = chai.expect;
 
-import AbstractModel, {IModelFillAbles, IModelFillAblesTypes} from './abstract.model.ts';
+import AbstractModel, {IModelFillAbles, IModelFillAblesTypes, IAbstractModel} from './abstract.model.ts';
 import {IHttpUtilService} from '../services/utils/http.service.ts';
 import {httpService as httpServiceName} from '../services/services.module.ts';
-//import AppConfig from '../app.config.ts';
 
 interface ITestModelAttributes {
     id: number;
@@ -20,8 +19,10 @@ interface ITestModelAttributes {
     };
 }
 
-class TestModel extends AbstractModel {
-    public attributes: ITestModelAttributes;
+interface ITestModel extends IAbstractModel<ITestModelAttributes> {}
+
+class TestModel extends AbstractModel<ITestModelAttributes, ITestModel> {
+    //public attributes: ITestModelAttributes;
     public static api = new TestModel();
     public rootUrl = 'users';
     protected fillAbles(): IModelFillAbles {
@@ -35,12 +36,6 @@ class TestModel extends AbstractModel {
     }
 }
 
-//TODO AbstractModel.toArray() ? (-> .attributes)
-
-//TODO CRUD
-//TODO findRelations (-> types for relations)
-
-//TODO handling of response errors
 
 describe('abstract.model', () => {
 
@@ -250,7 +245,14 @@ describe('abstract.model', () => {
 
     describe('relations', () => {
 
-        class RelationModel extends AbstractModel {
+        interface IRelationModelAttributes {
+            id: string;
+            text: string;
+        }
+
+        interface IRelationModel extends IAbstractModel<IRelationModelAttributes> {}
+
+        class RelationModel extends AbstractModel<IRelationModelAttributes, IRelationModel> {
             public rootUrl: string = 'posts';
             protected fillAbles (): IModelFillAbles {
                 return {
