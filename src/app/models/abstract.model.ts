@@ -276,7 +276,8 @@ abstract class AbstractModel<K extends IModelAttributes, J extends IAbstractMode
    * @param {IModelIdentifier} foreignId
    * @returns {ng.IPromise<IAbstractModel>}
    */
-  public findRelation(localId: IModelIdentifier, relation: any, foreignId: IModelIdentifier, parent: boolean = false)
+  public findRelation<M extends AbstractModel<any, any>>(localId: IModelIdentifier, relation: {new(): M},
+                                                         foreignId: IModelIdentifier, parent: boolean = false)
   : ng.IPromise<J> {
     let relationModel = new relation();
     if (parent) {
@@ -296,7 +297,8 @@ abstract class AbstractModel<K extends IModelAttributes, J extends IAbstractMode
    * @param {string} relation
    * @returns {ng.IPromise<IAbstractModel[]>}
    */
-  public allRelation(localId: IModelIdentifier, relation: any, parent: boolean = false): ng.IPromise<J[]> {
+  public allRelation<M extends AbstractModel<any, any>>(localId: IModelIdentifier, relation: {new(): M},
+                                                        parent: boolean = false): ng.IPromise<J[]> {
     let relationModel = new relation();
     if (parent) {
       return AbstractModel.httpService.read(`/${relationModel.rootUrl}/${localId}/${this.rootUrl}`).then(r => this.newModel(r));
